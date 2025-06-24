@@ -1,0 +1,187 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminProductDetailController!{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <body>
+
+    <header class="sticky-top" style="background-color: #331302FF;">
+        <div class="header">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
+                    <div>
+                        <a href="{{ path('app_mainpage') }}" class="d-inline-flex text-decoration-none">
+                            <img class="img-logo" src="{{ asset('img/logo.png') }}" alt="">
+                        </a>
+                    </div>
+
+                    <ul class="nav col-12 col-md-auto justify-content-center">
+                        <li><a href="{{ path('app_admin_home') }}" class="nav-link px-2 text-light">STATUS</a></li>
+                        <li><a href="{{ path('app_admin_catagory_home') }}"
+                               class="nav-link px-2 text-light">CATAGORY</a></li>
+                        <li><a href="{{ path('app_admin_product_home') }}" class="nav-link px-2 text-light">PRODUCT</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex justify-content-center">
+                        <!-- User Account Button -->
+                        <button class="btn" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                            <h2><i class="bi bi-person-circle text-light"></i></h2>
+                        </button>
+
+                        <!-- Account Offcanvas -->
+                        <div class="offcanvas offcanvas-start text-bg-white d-flex flex-column rounded-4"
+                             data-bs-scroll="true" tabindex="-1"
+                             id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas-header" style="background-color: #f0eeee;">
+                                <h4 class="mb-0 head-text text-black">
+                                    {% if app.user %}
+                                        {{ app.user.firstName }}'s Account
+                                    {% else %}
+                                        Guest Account
+                                    {% endif %}
+                                </h4>
+                                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <div class="offcanvas-body flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+
+                                <div class="head-text text-black">
+                                    <div id="cart-items" class="text-center">
+                                        {% if app.user %}
+                                            <!-- Show user name when logged in -->
+
+                                            <div class="btn btn-warning checkout-btn w-100 mb-3">
+                                                <a href="{{ path('app_logout') }}" class=" head-text text-black link-offset-2 link-underline link-underline-opacity-0">Logout</a>
+                                            </div>
+
+                                        {% else %}
+                                            <img src="{{ asset('img/account.png') }}" style="width: 200px;" alt="">
+                                            <a href="{{ path('app_login') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Login</button>
+                                            </a>
+                                            <a href="{{ path('app_register') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Sign up</button>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+
+    <main class="p-1">
+        {% for pizza in pizzas %}
+            <div class="row">
+                <!-- Left Side (Larger Column) -->
+                <div class="col-md-8 bg-light p-4">
+                    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                        <img src="{{ asset( pizza.image2 ) }}" alt="" class="img-fluid">
+                    </div>
+                </div>
+
+                <!-- Right Side (Smaller Column) -->
+                <div class="col-md-4 text-black p-4">
+                    <h1 class="head-text text-black">{{ pizza.name }}</h1>
+                    <br>
+                    <h3 class="head-text  text-black">Variation </h3>
+                    <br>
+                    <div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                Small
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
+                                   checked>
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Regular
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+                            <label class="form-check-label" for="flexRadioDefault3">
+                                Large
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4">
+                            <label class="form-check-label" for="flexRadioDefault4">
+                                Extra Large
+                            </label>
+                        </div>
+                    </div>
+                    <br>
+                    <h3 class="head-text  text-black">Sauce</h3>
+                    <br>
+                    <div>
+                        <div class="form-check">
+                            <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off">
+                            <label class="btn" for="option1">
+                                <div>
+                                    <img src="{{ asset('img/pizza/pizzaSauce/BBQsauce.png') }}" alt="" style="object-fit: contain; max-height: 50px;">
+                                    BBQ Sauce
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check">
+                            <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
+                            <label class="btn" for="option2">
+                                <div>
+                                    <img src="{{ asset('img/pizza/pizzaSauce/tomatoSauce.png') }}" alt="" style="object-fit: contain; max-height: 50px;">
+                                    Tomato Sauce
+                                </div>
+                            </label>
+                        </div>
+                        <br>
+                        <div class="form-check">
+                            <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off">
+                            <label class="btn" for="option3">
+                                <div>
+                                    <img src="{{ asset('img/pizza/pizzaSauce/extraTomatoSauce.png') }}" alt="" style="object-fit: contain; max-height: 50px;">
+                                    Extra Tomato Sauce
+                                </div>
+                            </label>
+                        </div>
+                        <br>
+                        <div class="form-check"><input type="radio" class="btn-check" name="options" id="option4" autocomplete="off">
+                            <label class="btn" for="option4">
+                                <div>
+                                    <img src="{{ asset('img/pizza/pizzaSauce/geenSauce.png') }}" alt="" style="object-fit: contain; max-height: 50px;">
+                                    No Sauce
+                                </div>
+                            </label>
+
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <h3 class="head-text text-black">{{ pizza.price }}</h3>
+                    <p>{{ pizza.discription }}</p>
+                    <br>
+                    <div class="mt-auto p-4  rounded">
+                        <a href="checkout.php">
+                            <button class=" head-text btn btn-warning checkout-btn w-100 mb-3">Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </main>
+
+
+
+    </body>
+{% endblock %}

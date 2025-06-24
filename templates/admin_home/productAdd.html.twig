@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ContactController!{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <body>
+    <header class="sticky-top" style="background-color: #331302FF;">
+        <div class="header">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
+                    <div>
+                        <a href="{{ path('app_mainpage') }}" class="d-inline-flex text-decoration-none">
+                            <img class="img-logo" src="{{ asset('img/logo.png') }}" alt="">
+                        </a>
+                    </div>
+
+                    <ul class="nav col-12 col-md-auto justify-content-center">
+                        <li><a href="{{ path('app_admin_home') }}" class="nav-link px-2 text-light">STATUS</a></li>
+                        <li><a href="{{ path('app_admin_catagory_home') }}" class="nav-link px-2 text-light">CATAGORY</a></li>
+                        <li><a href="{{ path('app_admin_product_home') }}" class="nav-link px-2 text-light">PRODUCT</a></li>
+                    </ul>
+
+                    <div class="d-flex justify-content-center">
+                        <!-- User Account Button -->
+                        <button class="btn" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                            <h2><i class="bi bi-person-circle text-light"></i></h2>
+                        </button>
+
+                        <!-- Account Offcanvas -->
+                        <div class="offcanvas offcanvas-start text-bg-white d-flex flex-column rounded-4"
+                             data-bs-scroll="true" tabindex="-1"
+                             id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas-header" style="background-color: #f0eeee;">
+                                <h4 class="mb-0 head-text text-black">
+                                    {% if app.user %}
+                                        {{ app.user.firstName }}'s Account
+                                    {% else %}
+                                        Guest Account
+                                    {% endif %}
+                                </h4>
+                                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <div class="offcanvas-body flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+
+                                <div class="head-text text-black">
+                                    <div id="cart-items" class="text-center">
+                                        {% if app.user %}
+                                            <!-- Show user name when logged in -->
+
+                                            <div class="btn btn-warning checkout-btn w-100 mb-3">
+                                                <a href="{{ path('app_logout') }}" class=" head-text text-black link-offset-2 link-underline link-underline-opacity-0">Logout</a>
+                                            </div>
+
+                                        {% else %}
+                                            <img src="{{ asset('img/account.png') }}" style="width: 200px;" alt="">
+                                            <a href="{{ path('app_login') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Login</button>
+                                            </a>
+                                            <a href="{{ path('app_register') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Sign up</button>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <main class="bg-white pt-5">
+
+
+
+        <div class="container mt-5">
+            <div class="p-4">
+                {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'needs-validation'}}) }}
+
+                <div class="mb-3">
+                    {{ form_label(form.name, 'Product Name', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Enter product name'}}) }}
+                    {{ form_errors(form.name) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.imageFile, 'Upload Image', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.imageFile) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.price, 'Price', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': 'Enter price'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.discription, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.discription, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Enter product description'}}) }}
+                    {{ form_errors(form.discription) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.catagory_id, 'Category', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.catagory_id, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.catagory_id) }}
+                </div>
+
+                <button type="submit" class="head-text btn w-100 text-white" style="background-color: #331302FF;">
+                    Save Product
+                </button>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </main>
+    <!-- footer -->
+
+
+    </body>
+{% endblock %}
