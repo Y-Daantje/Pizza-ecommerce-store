@@ -1,0 +1,203 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainpageController!{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <body>
+
+    <header class="sticky-top" style="background-color: #331302FF;">
+        <div class="header">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
+                    <div>
+                        <a href="{{ path('app_mainpage') }}" class="d-inline-flex text-decoration-none">
+                            <img class="img-logo" src="{{ asset('img/logo.png') }}" alt="">
+                        </a>
+                    </div>
+
+                    <ul class="nav col-12 col-md-auto justify-content-center">
+                        <li><a href="{{ path('app_admin_home') }}" class="nav-link px-2 text-light">STATUS</a></li>
+                        <li><a href="{{ path('app_admin_catagory_home') }}"
+                               class="nav-link px-2 text-light">CATAGORY</a></li>
+                        <li><a href="{{ path('app_admin_product_home') }}" class="nav-link px-2 text-light">PRODUCT</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex justify-content-center">
+                        <!-- User Account Button -->
+                        <button class="btn" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                            <h2><i class="bi bi-person-circle text-light"></i></h2>
+                        </button>
+
+                        <!-- Account Offcanvas -->
+                        <div class="offcanvas offcanvas-start text-bg-white d-flex flex-column rounded-4"
+                             data-bs-scroll="true" tabindex="-1"
+                             id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas-header" style="background-color: #f0eeee;">
+                                <h4 class="mb-0 head-text text-black">
+                                    {% if app.user %}
+                                        <img class="rounded-circle mx-auto" style="width: 80px;" src="{{ asset(app.user.pfp) }}" alt="">
+                                        &nbsp;
+                                        {{ app.user.firstName }} {{ app.user.lastName }}
+                                    {% else %}
+                                        Guest Account
+                                    {% endif %}
+                                </h4>
+                                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <div class="offcanvas-body flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+
+                                <div class="head-text text-black">
+                                    <div id="cart-items" class="text-center">
+                                        {% if app.user %}
+                                            <!-- Show user name when logged in -->
+
+                                            <div class="btn btn-warning checkout-btn w-100 mb-3">
+                                                <a href="{{ path('app_logout') }}" class=" head-text text-black link-offset-2 link-underline link-underline-opacity-0">Logout</a>
+                                            </div>
+
+                                        {% else %}
+                                            <img src="{{ asset('img/account.png') }}" style="width: 200px;" alt="">
+                                            <a href="{{ path('app_login') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Login</button>
+                                            </a>
+                                            <a href="{{ path('app_register') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Sign up</button>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+
+    <main>
+        <div class="container">
+            <h1 class="head-text text-black">Your orders</h1>
+            <br>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Order Number</th>
+                    <th scope="col">Food</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Update</th>
+                    <th scope="col">Detail</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    {% set orderTotalPrice = 0 %} <!-- Initialize total price for the order -->
+                    {% for pizzaPurchase in order.pizzaPurchases %}
+                        <tr>
+                            {% if loop.first %}  <!-- Only display order number for the first pizza in the order -->
+                                <th rowspan="{{ order.pizzaPurchases|length }}">{{ order.orderNumber }}</th>
+                            {% endif %}
+                            <td>
+                                {% if pizzaPurchase.pizza.image2 %}
+                                    <img src="{{ asset(pizzaPurchase.pizza.image2) }}" alt="Pizza Image"
+                                         style="width: 80px; height: 80px;">
+                                {% else %}
+                                    No Image Available
+                                {% endif %}
+                            </td>
+                            <td>{{ pizzaPurchase.pizza.price }}</td>
+                            <td>{{ pizzaPurchase.status }}</td>
+                            <td><a href="{{ path('app_admin_status_update', {'id': pizzaPurchase.id}) }}">
+                                    <button class="head-text btn" style="background-color: #331302FF;">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </a>
+                            </td>
+                            <td><a href="{{ path('app_admin_status_detail', {'id': pizzaPurchase.id}) }}">
+                                    <button class="head-text btn" style="background-color: #331302FF;">
+                                        <i class="bi bi-binoculars"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+
+        <div class="container">
+            <footer class="py-5">
+                <div class="row">
+                    <div class="col-6 col-md-2 mb-3">
+                        <img class="img-logo" src="{{ asset('img/logo.png') }}" alt="">
+
+
+                    </div>
+
+                    <div class="col-6 col-md-2 mb-3">
+                        <h4 class="head-text">OpeningsTijd:</h4>
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-2">• Ma 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Di 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Wo 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Do 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Vr 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Za 8:00 - 12:00</li>
+                            <li class="nav-item mb-2">• Zo - CLOSED</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-md-2 mb-3">
+                        <h4 class="head-text">ADRES</h4>
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">PIZZA LA DUSHI</a>
+                            </li>
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">020-3080209</a>
+                            </li>
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">BRASSESKADE
+                                    1</a>
+                            </li>
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">2612 CA
+                                    DELFT</a></li>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-5 offset-md-1 mb-3">
+                        <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4910.171219570555!2d4.347268376988208!3d52.023538072866955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c5b5d776440205%3A0xe5bfa517b4fd0e71!2sBrasserskade%201%2C%202612%20CA%20Delft!5e0!3m2!1snl!2snl!4v1725306360753!5m2!1snl!2snl"
+                                width="600" height="450" style="border:0; width: 100%; height: 384px;"
+                                allowfullscreen=""
+                                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+                    <p>© 2024 Company, Inc. All rights reserved.</p>
+                    <ul class="list-unstyled d-flex ">
+                        <i class="bi bi-twitter"></i>
+                        <i class="bi bi-youtube"></i>
+                        <i class="bi bi-facebook"></i>
+                    </ul>
+                </div>
+            </footer>
+        </div>
+    </footer>
+
+
+    </body>
+{% endblock %}

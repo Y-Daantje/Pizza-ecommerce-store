@@ -1,0 +1,234 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!
+{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <style>
+        /* Full-screen background image */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('{{ asset('img/batcave.jpg') }}') no-repeat center center/cover;
+
+            display: flex;
+            align-items: flex-start;
+        }
+
+        /* Fixed sidebar */
+        .right-sidebar {
+            width: 30%;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            overflow-y: auto;
+            position: absolute;
+            right: 0;
+            top: 0;
+            border-left: 2px solid #ddd;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .right-sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+
+
+    <body>
+
+    <!-- Right Sidebar (Previously Modal) -->
+    <div class="right-sidebar">
+        <div class="d-flex justify-content-around align-items-center">
+
+            <img src=" {{ asset('img/batmanLogo.png') }}" alt="" style="width: 200px;">
+            <img src=" {{ asset('img/X.png') }}" alt="" style="width: 50px; height: 50px;">
+            <img src=" {{ asset('img/logo.png') }}" alt="" style="width: 150px;">
+        </div>
+
+        <div class="accordion accordion-flush mt-3" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed border rounded-3" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne"
+                            style="background-color: #f0eeee;"> Variation
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                            <label class="form-check-label" for="flexRadioDefault1">Small </label>
+                            <br>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                            <label class="form-check-label" for="flexRadioDefault2">Regular </label>
+                            <br>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+                            <label class="form-check-label" for="flexRadioDefault3"> Large </label>
+                            <br>
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4">
+                            <label class="form-check-label" for="flexRadioDefault4">Extra large </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed border rounded-3"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseThree"
+                            aria-expanded="false"
+                            aria-controls="flush-collapseThree"
+                            style="background-color: #f0eeee;">
+                        Drink 1
+                    </button>
+                </h2>
+                <div id="flush-collapseThree"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option1"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option1">
+                                <div>
+                                    <img src="https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/fles_cola_-9687.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Fernandes Green
+                                    Punch 330 ml
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option2"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option2">
+                                <div>
+                                    <img src="https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/Fanta-9677.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Fanta Orange 330 ml
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option3"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option3">
+                                <div>
+                                    <img src="https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/Red_bull-10426.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Red Bull Energy
+                                    Drink 250 ml
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option4"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option4">
+                                <div>
+                                    <img src=" https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/coca_cola_-9699.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Coca-Cola 330 ml
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option5"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option5">
+                                <div>
+                                    <img src=" https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/fles_cola_-9686.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Coca-Cola 1,5L
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option6"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option6">
+                                <div>
+                                    <img src="https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/fanta-9688.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Fanta Orange 1,5L
+                                </div>
+                            </label></div>
+                        <br>
+                        <div class="form-check"><input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="options"
+                                    id="option7"
+                                    autocomplete="off">
+                            <label class="btn"
+                                   for="option7">
+                                <div>
+                                    <img src="https://s4d-mth-nyp-01-nl-prd-images-cdne.azureedge.net/Products/Original/Chaudfonteine_-9682.png"
+                                         alt=""
+                                         style="object-fit: contain; max-height: 50px;">
+                                    Water 500 ml
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="d-grid col-12 mt-3">
+            <button class="btn btn-warning d-flex justify-content-between" type="button">
+                <div class="head-text">€ 20,-</div>
+                <div class="head-text">Add to cart</div>
+            </button>
+        </div>
+        <div class=" d-grid col-4 mt-3">
+
+            <a class="link-offset-2 link-underline link-underline-opacity-0" href="{{ path('app_vid4') }}">
+                <button class="head-text text-white btn d-flex justify-content-between " type="button"
+                        style="background-color: #331302FF;">
+                    Back to website
+                </button>
+            </a>
+        </div>
+    </div>
+
+    </body>
+
+{% endblock %}

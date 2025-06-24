@@ -1,0 +1,1136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainpageController!{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('slick/slick-theme.css') }}"/>
+
+
+    <body>
+    <header class="sticky-top">
+        <div class="header">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3">
+                    <div>
+                        <a href="{{ path('app_mainpage') }}" class="d-inline-flex text-decoration-none">
+                            <img class="img-logo" src="{{ asset('img/logo.png') }}" alt="">
+                        </a>
+                    </div>
+
+                    <ul class="nav col-12 col-md-auto justify-content-center">
+                        <li><a href="{{ path('app_mainpage') }}" class="nav-link px-2 text-light">HOME</a></li>
+                        <li><a href="{{ path('app_contact') }}" class="nav-link px-2 text-light">CONTACT</a></li>
+                    </ul>
+
+                    <div class="d-flex justify-content-center">
+                        <!-- User Account Button -->
+                        <button class="btn" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                            <h2><i class="bi bi-person-circle text-light"></i></h2>
+                        </button>
+
+                        <!-- Account Offcanvas -->
+                        <div class="offcanvas offcanvas-start text-bg-white d-flex flex-column rounded-4"
+                             data-bs-scroll="true" tabindex="-1"
+                             id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                            <div class="offcanvas-header" style="background-color: #f0eeee;">
+                                <h4 class="mb-0 head-text text-black">
+                                    {% if app.user %}
+                                        {% if app.user.pfp is not empty %}
+                                            <img class="rounded-circle mx-auto" style="width: 80px;" src="{{ asset(app.user.pfp) }}" alt="">
+                                        {% else %}
+                                            <img class="rounded-circle mx-auto" style="width: 80px;" src="{{ asset('img/account.png') }}" alt="Default Profile">
+                                        {% endif %}
+                                        &nbsp;
+                                        {{ app.user.firstName }} {{ app.user.lastName }}
+                                    {% else %}
+                                        Guest Account
+                                    {% endif %}
+                                </h4>
+                                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <div class="offcanvas-body flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+                                <div class="head-text text-black">
+                                    <div id="cart-items" class="text-center">
+                                        {% if app.user %}
+                                            <!-- Show user name when logged in -->
+                                            <div class="btn btn-warning checkout-btn w-100 mb-3">
+                                                <a href="{{ path('app_user_status') }}" class=" head-text text-black link-offset-2 link-underline link-underline-opacity-0">Your Orders</a>
+                                            </div>
+                                            <div class="btn btn-warning checkout-btn w-100 mb-3">
+                                                <a href="{{ path('app_user') }}" class=" head-text text-black link-offset-2 link-underline link-underline-opacity-0">Your Account</a>
+                                            </div>
+                                            <div class="btn btn-warning checkout-btn w-100 mb-3">
+                                                <a href="{{ path('app_logout') }}" class=" head-text text-black link-offset-2 link-underline link-underline-opacity-0">Logout</a>
+                                            </div>
+                                        {% else %}
+                                            <img src="{{ asset('img/account.png') }}" style="width: 200px;" alt="">
+                                            <a href="{{ path('app_login') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Login</button>
+                                            </a>
+                                            <a href="{{ path('app_register') }}">
+                                                <button class="btn btn-warning checkout-btn w-100 mb-3">Sign up</button>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Shopping Cart Button (Always Visible) -->
+                        <button class="btn bg-transparent border border-0" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar"
+                                aria-label="Toggle navigation">
+                            <h2><i class="bi bi-cart text-light"></i></h2>
+                        </button>
+
+                        <!-- Shopping Cart Offcanvas -->
+                        <div class="offcanvas offcanvas-end text-bg-white d-flex flex-column rounded-4" tabindex="-1"
+                             id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+                            <div class="offcanvas-header" style="background-color: #f0eeee;">
+                                {% if app.user %}
+                                    <h4 class="mb-0 head-text text-black">Your Cart</h4>
+                                {% else %}
+                                    Your Cart Guest
+                                {% endif %}
+                                <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            {% if shopping_cart is empty %}
+                                <div class="offcanvas-body flex-grow-1 overflow-auto d-flex justify-content-center align-items-center">
+                                    <div id="cart-items" class="text-center">
+                                        <div>
+                                            <img src="{{ asset('img/spoon-and-fork.png') }}" style="width: 100px;" alt="">
+                                            <br><br>
+                                            <h5 class="head-text text-black">Your cart is empty</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                {% for item in shopping_cart %}
+                                    <div class="product-card p-3 shadow-sm border rounded d-flex align-items-center" id="cart-item-{{ item.id }}">
+                                        <div class="row w-100 align-items-center">
+                                            <!-- Product Image -->
+                                            <div class="col-3 text-center">
+                                                <img src="{{ asset(item.image) }}" alt="Product" class="img-fluid rounded">
+                                            </div>
+                                            <!-- Product Details -->
+                                            <div class="col-6">
+                                                <p class="head-text text-black text-sm mb-1">{{ item.name }}</p>
+                                                <span class="badge text-sm" style="background-color: #330c08; color: white; font-weight: 1000;">{{ item.price }}</span>
+                                                <span class="badge text-sm" style="background-color: #330c08; color: white; font-weight: 1000;">{{ item.size }}</span>
+                                                <span class="badge text-sm" style="background-color: #330c08; color: white; font-weight: 1000;">{{ item.quantity  }}</span>
+                                            </div>
+                                            <!-- Remove Button -->
+                                            <div class="col-3 text-end">
+                                                <form method="post" action="{{ path('app_remove_shopping_cart', {'id': item.id}) }}">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+
+                            <!-- Summary Section -->
+                            <div class="mt-auto p-4 shadow-sm border rounded">
+                                {% set total = 0 %}
+                                {% for item in shopping_cart %}
+                                    {% set itemTotal = item.price * item.quantity %}
+                                    {% set total = total + itemTotal %}
+                                {% endfor %}
+                                <h3 class="head-text text-black">Total: €{{ total|number_format(2, ',', '.') }}</h3>
+                                <a href="{{ path('app_checkout') }}">
+                                    <button class="btn btn-warning checkout-btn w-100 mb-3">Proceed to Checkout</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <div class="navbar-collapse d-flex justify-content-center" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="#deals">DEALS</a>
+                    <a class="nav-link active" aria-current="page" href="#boxMeals">BOX MEALS</a>
+                    <a class="nav-link active" aria-current="page" href="#burgers">BURGERS</a>
+                    <a class="nav-link active" aria-current="page" href="#pasta">PASTA</a>
+                    <a class="nav-link active" aria-current="page" href="#deserts">DESERTS</a>
+                    <a class="nav-link active" aria-current="page" href="#drinks">DRINKS</a>
+                    <a class="nav-link active" aria-current="page" href="#sauce">SAUCE</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <main>
+        <div class="container mt-5 mb-5">
+            <br>
+            <h2 class="head-text text-black">PIZZA</h2>
+            <br>
+            <div class="row">
+
+                {% for catagorys in categories %}
+                    <div class="col-md-4 ">
+                        <a class="link-offset-2 link-underline link-underline-opacity-0"
+                           href="{{ path('app_pizza_detail', {'category_id': catagorys.id}) }}">
+
+                            <div class="card border border-white border-5 card1">
+
+                                <img src="{{ asset(catagorys.image) }}" class="card-img-top" alt="...">
+
+                                <div class="card-body text-center">
+                                    <h2 class="head-text text-black">{{ catagorys.name }}</h2>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <a class="link-offset-2 link-underline link-underline-opacity-0" href="{{ path('app_all_pizza') }}">
+                <p class="head-text text-secondary-emphasis">
+                    Show all pizza's
+                </p>
+            </a>
+            <hr>
+            <br>
+            <div>
+                <div class="d-flex justify-content-around align-items-center">
+                    <img src="{{ asset('img/batmanLogo.png') }}" alt="" style="width: 200px;">
+                    <img src="{{ asset('img/X.png') }}" alt="" style="width: 50px; height: 50px;">
+                    <img src="{{ asset('img/logo.png') }}" alt="" style="width: 150px;">
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <h1 class="head-text text-black ">BATMAN X PIZZA LA DUSHI</h1>
+                </div>
+                <br>
+
+                {% for batpizza in batpizzas %}
+                    <div class="d-flex justify-content-evenly" style="background-color: black;">
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(batpizza.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark">{{ batpizza.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        1 Regular Pizza (Any Flavor) &amp; 500 Ml Soft Drink
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ batpizza.price }}
+                                        </div>
+
+                                        <div class="head-text">
+
+                                            <a href="{{ path('app_batcave') }}">
+                                                <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal"
+                                                        style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                    Go to the batcave
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <img src="{{ asset('img/batman.jpg') }}" alt="" style="height: 500px
+                            ;">
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="deals">DEALS</h2>
+            <br>
+
+
+            <div class="container">
+                <div class="row ">
+                    {% for deal in deals %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals  ">
+                            <div class="card h-100 border border-white border-5 ">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(deal.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ deal.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ deal.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ deal.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ deal.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ deal.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ deal.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(deal.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ deal.ModalInfo1 | raw }}
+                                                                            {{ deal.ModalInfo2 | raw }}
+                                                                            {{ deal.ModalInfo3 | raw }}
+                                                                            {{ deal.ModalInfo4 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': deal.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text ">{{ deal.price }}</div>
+                                                                        <div class="head-text ">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <br>
+            <h2 class="head-text text-black" id="boxMeals">BOX MEALS</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for box in boxs %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(box.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ box.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ box.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ box.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ box.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ box.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ box.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(box.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ box.ModalInfo1 | raw }}
+                                                                            {{ box.ModalInfo2 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': box.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ box.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="burgers">BURGERS</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for burger in burgers %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(burger.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ burger.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ burger.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ burger.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ burger.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ burger.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ burger.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(burger.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': burger.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ burger.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="pasta">PASTA</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for pasta in pastas %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(pasta.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ pasta.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ pasta.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ pasta.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ pasta.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ pasta.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ pasta.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(pasta.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ pasta.ModalInfo1 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': pasta.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ pasta.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="pasta">APPETIZERS</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for appetizer in appetizers %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(appetizer.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ appetizer.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ appetizer.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ appetizer.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ appetizer.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ appetizer.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ appetizer.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(appetizer.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ appetizer.ModalInfo1 | raw }}
+                                                                            {{ appetizer.ModalInfo2 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': appetizer.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ appetizer.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="pasta">SPIN ROLLS</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for roll in rolls %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(roll.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ roll.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ roll.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ roll.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ roll.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ roll.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ roll.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(roll.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ roll.ModalInfo1 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': roll.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ roll.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="deserts">DESERT</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for desert in deserts %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(desert.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ desert.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ desert.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ desert.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ desert.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ desert.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ desert.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(desert.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ desert.ModalInfo1 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': desert.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ desert.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="drinks">DRINKS</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for drink in drinks %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(drink.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ drink.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ drink.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ drink.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ drink.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ drink.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ drink.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(drink.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ drink.ModalInfo1 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': drink.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ drink.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br>
+            <h2 class="head-text text-black" id="sauce">DIP SAUCE</h2>
+            <br>
+            <div class="container">
+                <div class="row">
+                    {% for sauce in sauces %}
+                        <div class="col-sm-12 col-md-6 col-lg-4 p-3 containerDeals">
+                            <div class="card h-100 border border-white border-5">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="{{ asset(sauce.image) }}" class="card-img-top img-fluid"
+                                         style="object-fit: contain; max-height: 200px;"/>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2 text-dark"> {{ sauce.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ sauce.discription }}
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="badge bg-warning text-white fs-6 fw-bold mb-2">
+                                            {{ sauce.price }}
+                                        </div>
+                                        <div class="head-text">
+
+                                            <button type="button" class="btn w-100" data-bs-toggle="modal"
+                                                    data-bs-target="#{{ sauce.ModelId }}"
+                                                    style="background-color: #330c08; color: white; font-weight: 1000;">
+                                                Add To Cart
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ sauce.ModelId }}" tabindex="-1"
+                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-xl">
+                                                    <div class="modal-content">
+                                                        <!-- Modal Header -->
+                                                        <div class="modal-header">
+                                                            <h4 class="head-text text-black"> {{ sauce.name }}</h4>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <!-- Modal Body -->
+                                                        <div class="modal-body">
+                                                            <div class="container-fluid">
+                                                                <div class="row">
+                                                                    <!-- Left Side -->
+                                                                    <div class="col-md-6 border-end">
+
+                                                                        <img src="{{ asset(sauce.image) }}"
+                                                                             class="img-fluid rounded"
+                                                                             alt="Example Image"/>
+                                                                    </div>
+                                                                    <!-- Right Side -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="accordion accordion-flush"
+                                                                             id="accordionFlushExample">
+                                                                            {{ sauce.ModalInfo1 | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal Footer -->
+                                                        <div class="modal-footer">
+                                                            <div class="d-grid col-6 ">
+                                                                <form action="{{ path('app_add_shopping_cart', {'id': sauce.id}) }}" method="POST">
+                                                                    <input type="hidden" name="referer" value="{{ app.request.uri }}">
+                                                                    <button class="btn btn-warning d-flex justify-content-between" type="submit">
+                                                                        <div class="head-text">{{ sauce.price }}</div>
+                                                                        <div class="head-text">Add to cart</div>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+
+    </main>
+    <footer>
+
+        <div class="container">
+            <footer class="py-5">
+                <div class="row">
+                    <div class="col-6 col-md-2 mb-3">
+                        <img class="img-logo" src="{{ asset('img/logo.png') }}" alt="">
+
+
+                    </div>
+
+                    <div class="col-6 col-md-2 mb-3">
+                        <h4 class="head-text">OpeningsTijd:</h4>
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-2">• Ma 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Di 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Wo 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Do 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Vr 8:00 - 17:30</li>
+                            <li class="nav-item mb-2">• Za 8:00 - 12:00</li>
+                            <li class="nav-item mb-2">• Zo - CLOSED</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-md-2 mb-3">
+                        <h4 class="head-text">ADRES</h4>
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">PIZZA LA DUSHI</a>
+                            </li>
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">020-3080209</a>
+                            </li>
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">BRASSESKADE
+                                    1</a>
+                            </li>
+                            <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-light">2612 CA
+                                    DELFT</a></li>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-5 offset-md-1 mb-3">
+                        <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4910.171219570555!2d4.347268376988208!3d52.023538072866955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c5b5d776440205%3A0xe5bfa517b4fd0e71!2sBrasserskade%201%2C%202612%20CA%20Delft!5e0!3m2!1snl!2snl!4v1725306360753!5m2!1snl!2snl"
+                                width="600" height="450" style="border:0; width: 100%; height: 384px;"
+                                allowfullscreen=""
+                                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+                    <p>© 2024 Company, Inc. All rights reserved.</p>
+                    <ul class="list-unstyled d-flex ">
+                        <i class="bi bi-twitter"></i>
+                        <i class="bi bi-youtube"></i>
+                        <i class="bi bi-facebook"></i>
+                    </ul>
+                </div>
+            </footer>
+        </div>
+    </footer>
+
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ asset('slick/slick.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.your-class').slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 2000,
+            });
+        });
+    </script>
+
+
+    </body>
+{% endblock %}
